@@ -93,8 +93,11 @@ socket.on('redireccionar_sala', (sala) => {
     });
 });
 
-// Puerto en el que escucha el servidor
+
+   // Puerto en el que escucha el servidor
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+
+
