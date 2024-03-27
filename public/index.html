@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>NoteLive</title>
+</head>
+<body>
+    <div id="menu">
+        <h1>Menu</h1>
+        <button onclick="crearSala()">Crear Sala</button>
+        <button onclick="unirseASala()">Unirse a Sala</button>
+    </div>
+
+    <div id="sala" style="display: none;">
+        <h2>Sala</h2>
+        <div id="codigo"></div>
+        <form id="formulario">
+            <input type="text" id="pregunta" placeholder="Escribe tu pregunta...">
+            <button type="submit">Enviar</button>
+        </form>
+        <div id="preguntas">        
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let salaActual = null;
+        
+        function crearSala() {
+            socket.emit('crear_sala');
+        }
+
+        function unirseASala() {
+            const codigo = prompt("Introduce el código de la sala:");
+            if (codigo) {
+                socket.emit('unirse_sala', codigo);
+            }
+        }
+
+        const formulario = document.getElementById('formulario');
+        const inputPregunta = document.getElementById('pregunta');
+        const listaPreguntas = document.getElementById('preguntas');
+
+        formulario.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const pregunta = inputPregunta.value.trim();
+            if (pregunta !== '') {
+                socket.emit('enviar_pregunta', { sala: salaActual, pregunta });
+                inputPregunta.value = '';
+            }
+        });
+        //PENDIsENTE link de invitacion
+        socket.on('sala_creada', (sala) => {
+            salaActual = sala;
+            const link = document.createElement('a');
+            link.href = `/${sala}`;
+            link.innerText = sala;
+            document.getElementById('codigo').innerHTML = `Código de sala: `;
+            document.getElementById('codigo').appendChild(link);
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('sala').style.display = 'block';
+            console.log('Sala creada:', salaActual);
+        });
+
+        socket.on('sala_unida', (sala) => {
+            salaActual = sala;
+            const link = document.createElement('a');
+            link.href = `/${sala}`;
+            link.innerText = sala;
+            document.getElementById('codigo').innerHTML = `Código de sala: `;
+            document.getElementById('codigo').appendChild(link);
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('sala').style.display = 'block';
+            console.log('Sala unida:', salaActual);
+        });
+
+        socket.on('redireccionar_sala', (sala) => {
+            window.location.href = `/${sala}`;
+        });
+
+        socket.on('nueva_pregunta', (data) => {
+            const nuevaPregunta = document.createElement('div');
+            nuevaPregunta.textContent = data.pregunta;
+            nuevaPregunta.style.color = data.color;
+            listaPreguntas.appendChild(nuevaPregunta);
+            console.log('Nueva pregunta recibida:', data);
+        });
+        /* 
+        socket.on('nueva_respuesta', (data) => {
+            const nuevaRespuesta = document.createElement('div');
+            nuevaRespuesta.textContent = `Respuesta: ${data.respuesta}`;
+            nuevaRespuesta.style.color = data.color;
+            listaPreguntas.appendChild(nuevaRespuesta);
+            console.log('Nueva respuesta recibida:', data);
+        });
+        */
+        socket.on('error', (error) => {
+            console.error('Error:', error);
+            alert(error);
+        });
+    </script>
+</body>
+</html>
