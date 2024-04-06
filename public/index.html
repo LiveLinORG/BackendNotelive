@@ -7,28 +7,57 @@
     <title>NoteLive</title>
 </head>
 <body>
-    <div id="menu">
-        <h1>Menu</h1>
-        <button onclick="crearSala()">Crear Sala</button>
-        <button onclick="unirseASala()">Unirse a Sala</button>
+    <div class="container">
+        <div class="homepage">
+            <div class="card" onclick="crearSala()">
+                <div class="card-icon">
+                    <img src="plus_icon.png" alt="Crear Sala">
+                </div>
+                <h2>Crear Sala</h2>
+                <p>Crea una nueva sala para comenzar tu experiencia en NoteLive.</p>
+                <button>Crear Sala</button>
+            </div>
+            <div class="card" onclick="unirseASala()">
+                <div class="card-icon">
+                    <img src="door_icon.png" alt="Unirse a Sala">
+                </div>
+                <h2>Unirse a Sala</h2>
+                <p>Únete a una sala existente introduciendo el código correspondiente.</p>
+                <button>Unirse a Sala</button>
+            </div>
+        </div>
     </div>
 
     <div id="sala" style="display: none;">
-        <h2>Sala</h2>
-        <div id="codigo"></div>
-        <form id="formulario">
-            <input type="text" id="pregunta" placeholder="Escribe tu pregunta...">
-            <button type="submit">Enviar</button>
-        </form>
-        <div id="preguntas">        
+        <div class="columns">
+            <div class="chat-column">
+                <form id="formulario" style="display: none;">
+                    <input type="text" id="pregunta" placeholder="Escribe tu pregunta...">
+                    <button type="submit">Enviar</button>
+                </form>
+
+                <div id="preguntas" style="display: none;">
+                    <!-- Aquí irán las preguntas -->
+                </div>
+
+                <div id="codigo"></div>
+            </div>
+            <div class="central-column">
+                <!-- Aquí irá la columna central -->
+            </div>
+            <div class="questions-column" style="display: none;">
+                <!-- Aquí irán las preguntas -->
+            </div>
         </div>
     </div>
+
+    <footer id="footer"></footer>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
         let salaActual = null;
-        
+
         function crearSala() {
             socket.emit('crear_sala');
         }
@@ -52,28 +81,28 @@
                 inputPregunta.value = '';
             }
         });
-        //PENDIsENTE link de invitacion
+
         socket.on('sala_creada', (sala) => {
             salaActual = sala;
-            const link = document.createElement('a');
-            link.href = `/${sala}`;
-            link.innerText = sala;
-            document.getElementById('codigo').innerHTML = `Código de sala: `;
-            document.getElementById('codigo').appendChild(link);
-            document.getElementById('menu').style.display = 'none';
+            document.getElementById('codigo').innerText = `Código de sala: ${sala}`;
+            document.querySelector('.homepage').style.display = 'none';
             document.getElementById('sala').style.display = 'block';
+            document.querySelector('.chat-column').style.display = 'block'; // Mostrar la columna de chat
+            document.getElementById('formulario').style.display = 'block';
+            document.getElementById('preguntas').style.display = 'block';
+            document.querySelector('.central-column').innerText = 'Aquí se importará el PPT';
             console.log('Sala creada:', salaActual);
         });
 
         socket.on('sala_unida', (sala) => {
             salaActual = sala;
-            const link = document.createElement('a');
-            link.href = `/${sala}`;
-            link.innerText = sala;
-            document.getElementById('codigo').innerHTML = `Código de sala: `;
-            document.getElementById('codigo').appendChild(link);
-            document.getElementById('menu').style.display = 'none';
+            document.getElementById('codigo').innerText = `Código de sala: ${sala}`;
+            document.querySelector('.homepage').style.display = 'none';
             document.getElementById('sala').style.display = 'block';
+            document.querySelector('.chat-column').style.display = 'block'; // Mostrar la columna de chat
+            document.getElementById('formulario').style.display = 'block';
+            document.getElementById('preguntas').style.display = 'block';
+            document.querySelector('.central-column').innerText = 'Aquí se importará el PPT';
             console.log('Sala unida:', salaActual);
         });
 
@@ -88,19 +117,20 @@
             listaPreguntas.appendChild(nuevaPregunta);
             console.log('Nueva pregunta recibida:', data);
         });
-        /* 
-        socket.on('nueva_respuesta', (data) => {
-            const nuevaRespuesta = document.createElement('div');
-            nuevaRespuesta.textContent = `Respuesta: ${data.respuesta}`;
-            nuevaRespuesta.style.color = data.color;
-            listaPreguntas.appendChild(nuevaRespuesta);
-            console.log('Nueva respuesta recibida:', data);
-        });
-        */
+
         socket.on('error', (error) => {
             console.error('Error:', error);
             alert(error);
         });
+
+        // Footer dinámico para mostrar si estás logeado o no
+        const footer = document.getElementById('footer');
+        const isLoggedIn = false; // Cambiar a true si está logeado
+        if (isLoggedIn) {
+            footer.innerHTML = '<p>Estás logeado.</p>';
+        } else {
+            footer.innerHTML = '<p>No estás logeado. <a href="http://localhost:3000/login.html">Iniciar sesión</a></p>';
+        }
     </script>
 </body>
 </html>

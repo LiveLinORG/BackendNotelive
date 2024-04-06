@@ -8,19 +8,47 @@ body {
 
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 50px auto; /* Centrar el contenedor */
 }
 
-#menu, #sala {
+.homepage {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    width: 300px;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-h1, h2 {
+.card-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background-color: #FFA500; /* Color naranja */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-icon img {
+    width: 40px;
+    height: 40px;
+}
+
+h2 {
     margin-top: 0;
     color: #333;
+}
+
+p {
+    margin-bottom: 20px;
 }
 
 button {
@@ -38,29 +66,43 @@ button:hover {
     background-color: #0056b3;
 }
 
-form {
-    margin-top: 20px;
+.columns {
+    display: flex;
 }
 
-input[type="text"] {
-    width: calc(100% - 80px);
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.chat-column, .questions-column {
+    width: 20%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
 }
 
-button[type="submit"] {
-    width: 80px;
+.central-column {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#preguntas {
-    margin-top: 20px;
+/* Estilo para el footer */
+#footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
-#preguntas div {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f2f2f2;
-    border-radius: 4px;
+#footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    text-decoration: underline;
 }

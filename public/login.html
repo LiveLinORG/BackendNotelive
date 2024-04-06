@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT - Login/Registro</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2 class="login-title" id="form-title">Iniciar sesión</h2>
+            <form class="login-form" id="login-form" action="#">
+                <div class="form-group">
+                    <label for="username">Nombre de usuario</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">Iniciar sesión</button>
+            </form>
+            <form class="register-form" id="register-form" style="display:none;" action="/registro" method="POST">
+                <div class="form-group">
+                    <label for="new-username">Nuevo nombre de usuario</label>
+                    <input type="text" id="new-username" name="new_username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">Nueva contraseña</label>
+                    <input type="password" id="new-password" name="new_password" required>
+                </div>
+                <button type="submit" class="register-btn">Registrarse</button>
+            </form>
+            
+            <div class="form-toggle" id="form-toggle">
+                ¿No tienes una cuenta? <a href="#" id="toggle-link">Regístrate</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables de elementos del DOM
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const formTitle = document.getElementById('form-title');
+        const formToggle = document.getElementById('form-toggle');
+        const toggleLink = document.getElementById('toggle-link');
+
+        // Función para cambiar entre formularios de login y registro
+        function toggleForm() {
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                formTitle.innerText = 'Iniciar sesión';
+                toggleLink.innerText = 'Regístrate';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                formTitle.innerText = 'Registrarse';
+                toggleLink.innerText = 'Iniciar sesión';
+            }
+        }
+
+        // Evento de click para cambiar entre formularios
+        formToggle.addEventListener('click', toggleForm);
+    </script>
+</body>
+</html>
