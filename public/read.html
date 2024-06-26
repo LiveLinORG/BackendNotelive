@@ -10,7 +10,7 @@
 <div id="sesiones">
     <h1>Sesiones Anteriores</h1>
     <div id="listaSesiones" class="lista-sesiones"></div>
-    <button onclick="volverAlMenu()">Volver al Menu</button>
+    <button onclick="volverAlMenu()">Volver al Menú</button>
     <button onclick="vaciarMensajes()">Vaciar Mensajes</button>
     <button onclick="eliminarSala()">Eliminar Sala</button>
 </div>
@@ -41,41 +41,42 @@
     function volverAlMenu() {
         window.location.href = '/';
     }
-    function vaciarMensajes() {
-    if (confirm("¿Estás seguro de que deseas vaciar todos los mensajes? Esta acción no se puede deshacer.")) {
-        fetch('/api/vaciar', { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    alert('Todos los mensajes han sido vaciados.');
-                    window.location.reload();
-                } else {
-                    alert('Error al vaciar los mensajes.');
-                }
-            })
-            .catch(error => console.error('Error al vaciar los mensajes:', error));
-    }
-}
 
-function eliminarSala() {
+    function vaciarMensajes() {
+        if (confirm("¿Estás seguro de que deseas vaciar todos los mensajes? Esta acción no se puede deshacer.")) {
+            fetch('/api/vaciar', { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Todos los mensajes han sido vaciados.');
+                        window.location.reload();
+                    } else {
+                        alert('Error al vaciar los mensajes.');
+                    }
+                })
+                .catch(error => console.error('Error al vaciar los mensajes:', error));
+        }
+    }
+
+    function eliminarSala() {
         document.getElementById('eliminarSalaPrompt').style.display = 'block';
     }
 
     function confirmarEliminarSala() {
-    const pinSala = document.getElementById('pinSala').value;
-    if (pinSala && confirm("¿Estás seguro de que deseas eliminar la sala con PIN " + pinSala + "? Esta acción no se puede deshacer.")) {
-        fetch(`/api/eliminarSala/${pinSala}`, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    alert('La sala ha sido eliminada.');
-                    window.location.reload(); // Recarga la página
-                } else {
-                    alert('Error al eliminar la sala.');
-                }
-            })
-            .catch(error => console.error('Error al eliminar la sala:', error));
+        const pinSala = document.getElementById('pinSala').value;
+        if (pinSala && confirm("¿Estás seguro de que deseas eliminar la sala con PIN " + pinSala + "? Esta acción no se puede deshacer.")) {
+            fetch(`/api/eliminarSala/${pinSala}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('La sala ha sido eliminada.');
+                        window.location.reload(); 
+                    } else {
+                        alert('Error al eliminar la sala.');
+                    }
+                })
+                .catch(error => console.error('Error al eliminar la sala:', error));
+        }
+        document.getElementById('eliminarSalaPrompt').style.display = 'none';
     }
-    document.getElementById('eliminarSalaPrompt').style.display = 'none';
-}
 
     function cancelarEliminarSala() {
         document.getElementById('eliminarSalaPrompt').style.display = 'none';

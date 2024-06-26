@@ -3,38 +3,31 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const crypto = require('crypto');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Ruta al directorio de archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite database
 const db = new sqlite3.Database('./messages.db');
 
-// Objeto para almacenar las salas activas
 const salasActivas = {};
 
-// Función para generar un código de sala aleatorio de 7 dígitos
 function generarCodigoSala() {
     return Math.floor(1000000 + Math.random() * 9000000).toString();
 }
 
-// Manejar la solicitud de una sala específica
 app.get('/:sala', (req, res) => {
     const sala = req.params.sala;
-    // Verificar si la sala existe y está activa
     if (sala.length === 7 && /^\d+$/.test(sala) && salasActivas[sala]) {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     } else {
-        // Si la sala no existe o no está activa, redirigir al menú principal
         res.redirect('/');
     }
 });
 
-// Ruta para obtener todas las sesiones guardadas
 app.get('/api/sesiones', (req, res) => {
     db.all('SELECT * FROM sesiones', (err, rows) => {
         if (err) {
@@ -45,7 +38,6 @@ app.get('/api/sesiones', (req, res) => {
     });
 });
 
-// Ruta para vaciar todos los mensajes
 app.delete('/api/vaciar', (req, res) => {
     db.run('DELETE FROM sesiones', (err) => {
         if (err) {
@@ -56,7 +48,6 @@ app.delete('/api/vaciar', (req, res) => {
     });
 });
 
-// Ruta para eliminar una sala específica por su pin
 app.delete('/api/eliminarSala/:sala', (req, res) => {
     const sala = req.params.sala;
     db.run('DELETE FROM sesiones WHERE sala = ?', [sala], (err) => {
@@ -68,23 +59,20 @@ app.delete('/api/eliminarSala/:sala', (req, res) => {
     });
 });
 
-// Manejar las conexiones de Socket.IO
 io.on('connection', (socket) => {
     console.log('Usuario conectado:', socket.id);
 
-    // Manejar la creación de una sala
     socket.on('crear_sala', () => {
         const sala = generarCodigoSala();
-        // Registrar la sala como activa
-        salasActivas[sala] = [];
+        const token = crypto.randomBytes(20).toString('hex');
+        salasActivas[sala] = { token, mensajes: [] }; 
         socket.join(sala);
-        socket.emit('sala_creada', sala);
+        socket.emit('sala_creada', { sala, token });
         console.log('Sala creada:', sala);
     });
 
-    // Manejar unirse a una sala
     socket.on('unirse_sala', (sala) => {
-        // Verificar si la sala existe y está activa
+        
         if (salasActivas[sala]) {
             socket.join(sala);
             socket.emit('sala_unida', sala);
@@ -94,14 +82,10 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Manejar el envío de preguntas
     socket.on('enviar_pregunta', (data) => {
         const { sala, pregunta } = data;
-        // Verificar si la sala existe y está activa
         if (salasActivas[sala]) {
-            // Almacenar la pregunta en los mensajes de la sala
-            salasActivas[sala].push(pregunta);
-            // Emitir la nueva pregunta a todos los clientes en la sala
+            salasActivas[sala].mensajes.push(pregunta);
             io.to(sala).emit('nueva_pregunta', { pregunta });
             console.log('Pregunta enviada a sala', sala, ':', pregunta);
         } else {
@@ -109,22 +93,23 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Manejar la terminación de una sesión
-    socket.on('terminar_sesion', (sala) => {
-        // Verificar si la sala existe y está activa
+    socket.on('terminar_sesion', (data) => {
+        const { sala, token } = data;
         if (salasActivas[sala]) {
-            const mensajes = salasActivas[sala].join(' | ');
-            // Guardar los mensajes de la sala en la base de datos
-            db.run('INSERT INTO sesiones (sala, mensajes) VALUES (?, ?)', [sala, mensajes], (err) => {
-                if (err) {
-                    socket.emit('error', 'Error al guardar los mensajes');
-                } else {
-                    console.log('Sesión terminada y mensajes guardados para la sala', sala);
-                    io.to(sala).emit('sesion_terminada');
-                    // Eliminar la sala de las salas activas
-                    delete salasActivas[sala];
-                }
-            });
+            if (salasActivas[sala].token === token) {
+                const mensajes = salasActivas[sala].mensajes.join(' | ');
+                db.run('INSERT INTO sesiones (sala, mensajes) VALUES (?, ?)', [sala, mensajes], (err) => {
+                    if (err) {
+                        socket.emit('error', 'Error al guardar los mensajes');
+                    } else {
+                        console.log('Sesión terminada y mensajes guardados para la sala', sala);
+                        io.to(sala).emit('sesion_terminada');
+                        delete salasActivas[sala];
+                    }
+                });
+            } else {
+                socket.emit('error', 'Token de sesión inválido o no autorizado');
+            }
         } else {
             socket.emit('error', 'La sala no existe o no está activa');
         }
@@ -135,7 +120,6 @@ io.on('connection', (socket) => {
     });
 });
 
-// Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);

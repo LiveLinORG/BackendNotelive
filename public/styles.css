@@ -1,9 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f7f7f7;
-    color: #333;
+    background-color: #1a1a1a; 
+    color: #e0e0e0; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,9 +18,9 @@ body {
 
 #menu, #sala, #sesiones {
     padding: 20px;
-    background-color: #fff;
+    background-color: #333; 
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
     width: 100%;
     box-sizing: border-box;
     text-align: center;
@@ -28,23 +28,24 @@ body {
 
 h1, h2 {
     margin-top: 0;
-    color: #333;
+    color: #cca300; 
 }
 
 button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #b38600; 
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 5px;
+    margin: 8px;
+    text-transform: uppercase;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #996300;
 }
 
 form {
@@ -55,17 +56,17 @@ form {
 }
 
 input[type="text"] {
-    width: calc(100% - 90px);
-    padding: 10px;
+    width: calc(100% - 100px);
+    padding: 12px;
     font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #666; 
+    border-radius: 6px;
     margin-right: 10px;
     box-sizing: border-box;
 }
 
 button[type="submit"] {
-    width: 80px;
+    width: 100px;
 }
 
 #preguntas {
@@ -75,9 +76,9 @@ button[type="submit"] {
 
 #preguntas div {
     margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f2f2f2;
-    border-radius: 4px;
+    padding: 12px;
+    background-color: #2b2b2b; 
+    border-radius: 6px;
 }
 
 .lista-sesiones {
@@ -87,22 +88,22 @@ button[type="submit"] {
 }
 
 .sesion {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: #333; 
+    border: 1px solid #666; 
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .sesion:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .sesion h2 {
     margin-top: 0;
-    color: #0056b3;
+    color: #cca300;
 }
 
 .sesion p {
@@ -113,19 +114,31 @@ button[type="submit"] {
 }
 
 .mensaje {
-    background-color: #e0e7ff;
-    border: 1px solid #b3c5ff;
+    background-color: #5c5c33; 
+    border: 1px solid #857e59; 
     border-radius: 16px;
     padding: 10px 15px;
     transition: background-color 0.3s, border-color 0.3s;
 }
 
 .mensaje:hover {
-    background-color: #c7d2fe;
-    border-color: #a5b4fc;
+    background-color: #736b3f;
+    border-color: #8c8253; 
 }
 
 #eliminarSalaPrompt {
     display: none;
     text-align: center;
+}
+
+h3 {
+    color: #ccc;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+}
+
+h4 {
+    color: #999; 
+    font-size: 1.4rem;
+    margin-bottom: 20px;
 }

@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>NoteLive</title>
+    <title>SI726</title>
 </head>
 <body>
 <div id="menu">
-    <h1>Menu</h1>
+    <h1>Post It</h1>
+    <h3>El tablero de notas traido a lo virtual</h3>
+    <h4>Comparte tus ideas con tus amigos</h4>
     <button onclick="crearSala()">Crear Sala</button>
     <button onclick="unirseASala()">Unirse a Sala</button>
     <button onclick="verSesionesAnteriores()">Ver Sesiones Anteriores</button>
@@ -42,9 +44,15 @@
     }
 
     function terminarSesion() {
-        if (confirm("¿Estás seguro de terminar la sesión?")) {
-            socket.emit('terminar_sesion', salaActual);
+        const token = localStorage.getItem('salaToken');
+        if (!token) {
+            alert('No se encontró el token de sesión. Por favor, cree o únase a una sala.');
+            return;
         }
+        if (confirm("¿Estás seguro de terminar la sesión?")) {
+            localStorage.removeItem('salaToken');
+            socket.emit('terminar_sesion', { sala: salaActual, token });
+        }        
     }
 
     function verSesionesAnteriores() {
@@ -64,13 +72,15 @@
         }
     });
 
-    socket.on('sala_creada', (sala) => {
-        salaActual = sala;
+    socket.on('sala_creada', (data) => {
+        salaActual = data.sala;
+        const token = data.token;
+        localStorage.setItem('salaToken', token);
         const link = document.createElement('span');
-        link.innerText = sala;
+        link.innerText = data.sala;
         link.style.cursor = 'pointer';
         link.addEventListener('click', () => {
-            navigator.clipboard.writeText(sala).then(() => {
+            navigator.clipboard.writeText(salaActual).then(() => {
                 alert('Código de sala copiado al portapapeles');
             });
         });
@@ -83,6 +93,7 @@
 
     socket.on('sala_unida', (sala) => {
         salaActual = sala;
+        const token = localStorage.getItem('salaToken');
         const link = document.createElement('span');
         link.innerText = sala;
         link.style.cursor = 'pointer';
