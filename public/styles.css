@@ -4,18 +4,26 @@ body {
     padding: 0;
     background-color: #f7f7f7;
     color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .container {
     width: 80%;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-#menu, #sala {
+#menu, #sala, #sesiones {
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 h1, h2 {
@@ -32,6 +40,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 5px;
 }
 
 button:hover {
@@ -40,14 +49,19 @@ button:hover {
 
 form {
     margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 input[type="text"] {
-    width: calc(100% - 80px);
+    width: calc(100% - 90px);
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-right: 10px;
+    box-sizing: border-box;
 }
 
 button[type="submit"] {
@@ -56,6 +70,7 @@ button[type="submit"] {
 
 #preguntas {
     margin-top: 20px;
+    text-align: left;
 }
 
 #preguntas div {
@@ -63,4 +78,54 @@ button[type="submit"] {
     padding: 10px;
     background-color: #f2f2f2;
     border-radius: 4px;
+}
+
+.lista-sesiones {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sesion {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.sesion:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sesion h2 {
+    margin-top: 0;
+    color: #0056b3;
+}
+
+.sesion p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0 0 0;
+}
+
+.mensaje {
+    background-color: #e0e7ff;
+    border: 1px solid #b3c5ff;
+    border-radius: 16px;
+    padding: 10px 15px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.mensaje:hover {
+    background-color: #c7d2fe;
+    border-color: #a5b4fc;
+}
+
+#eliminarSalaPrompt {
+    display: none;
+    text-align: center;
 }
