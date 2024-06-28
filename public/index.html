@@ -31,6 +31,7 @@
 <script>
     const socket = io();
     let salaActual = null;
+    let preguntas = []; // Array para almacenar las preguntas
 
     function crearSala() {
         socket.emit('crear_sala');
@@ -52,7 +53,7 @@
         if (confirm("¿Estás seguro de terminar la sesión?")) {
             localStorage.removeItem('salaToken');
             socket.emit('terminar_sesion', { sala: salaActual, token });
-        }        
+        }
     }
 
     function verSesionesAnteriores() {
@@ -84,7 +85,7 @@
                 alert('Código de sala copiado al portapapeles');
             });
         });
-        document.getElementById('codigo').innerHTML = `Código de sala: `;
+        document.getElementById('codigo').innerHTML = 'Código de sala: ';
         document.getElementById('codigo').appendChild(link);
         document.getElementById('menu').style.display = 'none';
         document.getElementById('sala').style.display = 'block';
@@ -102,7 +103,7 @@
                 alert('Código de sala copiado al portapapeles');
             });
         });
-        document.getElementById('codigo').innerHTML = `Código de sala: `;
+        document.getElementById('codigo').innerHTML = 'Código de sala: ';
         document.getElementById('codigo').appendChild(link);
         document.getElementById('menu').style.display = 'none';
         document.getElementById('sala').style.display = 'block';
@@ -110,9 +111,8 @@
     });
 
     socket.on('nueva_pregunta', (data) => {
-        const nuevaPregunta = document.createElement('div');
-        nuevaPregunta.textContent = data.pregunta;
-        listaPreguntas.appendChild(nuevaPregunta);
+        preguntas.push(data.pregunta);
+        renderPreguntas();
         console.log('Nueva pregunta recibida:', data);
     });
 
@@ -125,6 +125,16 @@
         console.error('Error:', error);
         alert(error);
     });
+
+    function renderPreguntas() {
+        listaPreguntas.innerHTML = '';
+        const preguntasAMostrar = preguntas.slice(-10); // Toma las últimas 10 preguntas
+        preguntasAMostrar.forEach(pregunta => {
+            const nuevaPregunta = document.createElement('div');
+            nuevaPregunta.textContent = pregunta;
+            listaPreguntas.appendChild(nuevaPregunta);
+        });
+    }
 </script>
 </body>
 </html>

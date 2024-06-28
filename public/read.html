@@ -13,6 +13,7 @@
     <button onclick="volverAlMenu()">Volver al Menú</button>
     <button onclick="vaciarMensajes()">Vaciar Mensajes</button>
     <button onclick="eliminarSala()">Eliminar Sala</button>
+    <button onclick="verDetallesSesion()">Ver Detalles de Sesión Específica</button>
 </div>
 
 <div id="eliminarSalaPrompt" style="display: none;">
@@ -22,6 +23,13 @@
     <button onclick="cancelarEliminarSala()">Cancelar</button>
 </div>
 
+<div id="verDetallesPrompt" style="display: none;">
+    <h2>Ver Detalles de Sesión Específica</h2>
+    <input type="text" id="pinSesionDetalles" placeholder="Ingrese el PIN de la sala">
+    <button onclick="confirmarVerDetalles()">Confirmar</button>
+    <button onclick="cancelarVerDetalles()">Cancelar</button>
+</div>
+
 <script>
     function cargarSesiones() {
         fetch('/api/sesiones')
@@ -29,9 +37,11 @@
             .then(data => {
                 const listaSesiones = document.getElementById('listaSesiones');
                 data.forEach(sesion => {
+                    const mensajes = sesion.mensajes.split(' | ');
+                    const primerosQuinceMensajes = mensajes.slice(0, 15).map(mensaje => `<span class="mensaje">${mensaje}</span>`).join('');
                     const sesionDiv = document.createElement('div');
                     sesionDiv.className = 'sesion';
-                    sesionDiv.innerHTML = `<h2>Sala: ${sesion.sala}</h2><p>${sesion.mensajes.split(' | ').map(mensaje => `<span class="mensaje">${mensaje}</span>`).join('')}</p>`;
+                    sesionDiv.innerHTML = `<h2>Sala: ${sesion.sala}</h2><p>${primerosQuinceMensajes}</p>`;
                     listaSesiones.appendChild(sesionDiv);
                 });
             })
@@ -68,7 +78,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('La sala ha sido eliminada.');
-                        window.location.reload(); 
+                        window.location.reload();
                     } else {
                         alert('Error al eliminar la sala.');
                     }
@@ -80,6 +90,21 @@
 
     function cancelarEliminarSala() {
         document.getElementById('eliminarSalaPrompt').style.display = 'none';
+    }
+
+    function verDetallesSesion() {
+        document.getElementById('verDetallesPrompt').style.display = 'block';
+    }
+
+    function confirmarVerDetalles() {
+        const pinSesionDetalles = document.getElementById('pinSesionDetalles').value;
+        if (pinSesionDetalles) {
+            window.location.href = `/readespecific.html?sala=${pinSesionDetalles}`;
+        }
+    }
+
+    function cancelarVerDetalles() {
+        document.getElementById('verDetallesPrompt').style.display = 'none';
     }
 
     document.addEventListener('DOMContentLoaded', cargarSesiones);

@@ -27,6 +27,16 @@ app.get('/:sala', (req, res) => {
         res.redirect('/');
     }
 });
+app.get('/api/sesion/:sala', (req, res) => {
+    const sala = req.params.sala;
+    db.get('SELECT * FROM sesiones WHERE sala = ?', [sala], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(row);
+    });
+});
 
 app.get('/api/sesiones', (req, res) => {
     db.all('SELECT * FROM sesiones', (err, rows) => {

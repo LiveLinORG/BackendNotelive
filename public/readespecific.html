@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .session-details {
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .session-details h2 {
+            margin-top: 0;
+            color: #cca300;
+        }
+
+        .messages {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .messages .message {
+            background-color: #2b2b2b;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .messages .message p {
+            margin: 0;
+            color: #ccc;
+        }
+    </style>
+
+
+
+    <title>Detalles de Sesión - NoteLive</title>
+</head>
+<body>
+<div class="container">
+    <h1>Detalles de Sesión</h1>
+    <div id="detallesSesion" class="session-details">
+        <h2 id="nombreSala"></h2>
+        <div class="messages" id="mensajes"></div>
+    </div>
+    <button onclick="volver()">Volver</button>
+</div>
+
+<script>
+    function obtenerParametrosUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            sala: params.get('sala')
+        };
+    }
+
+    function cargarDetallesSesion() {
+        const { sala } = obtenerParametrosUrl();
+        fetch(`/api/sesion/${sala}`)
+            .then(response => response.json())
+            .then(data => {
+                const nombreSala = document.getElementById('nombreSala');
+                const mensajesContainer = document.getElementById('mensajes');
+
+                if (data) {
+                    nombreSala.textContent = `Sala: ${data.sala}`;
+                    data.mensajes.split(' | ').forEach((mensaje, index) => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.classList.add('message');
+                        messageDiv.innerHTML = `<p>${mensaje}</p>`;
+                        mensajesContainer.appendChild(messageDiv);
+                    });
+                } else {
+                    nombreSala.textContent = `No se encontraron detalles para la sala con PIN ${sala}`;
+                }
+            })
+            .catch(error => console.error('Error al cargar los detalles de la sesión:', error));
+    }
+
+    function volver() {
+        window.location.href = '/';
+    }
+
+    document.addEventListener('DOMContentLoaded', cargarDetallesSesion);
+</script>
+</body>
+
+</html>
